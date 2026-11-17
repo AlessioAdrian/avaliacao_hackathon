@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliação e Ranking — Hackathon TI Anhanguera Osasco</title>
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkF2YWxpYcOnw6NvIEhhY2thdGhvbiBUSSIsCiAgInNob3J0X25hbWUiOiAiQXZhbGlhSGFjayIsCiAgInN0YXJ0X3VybCI6ICIuIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMGYxNzJhIiwKICAidGhlbWVfY29sb3IiOiAiI2Y5NzMxNiIKfQ==">
+    <style>
+        :root { --primary: #f97316; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --border: #334155; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: var(--card); padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border-top: 5px solid var(--primary); }
+        
+        /* Efeito Especial na Logomarca */
+        .logo-container { 
+            text-align: center; 
+            margin-bottom: 20px; 
+            padding: 15px; 
+            border-radius: 12px; 
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid var(--primary);
+            position: relative;
+            animation: pulse-glow 2s infinite alternate;
+        }
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 10px rgba(249, 115, 22, 0.2), inset 0 0 5px rgba(249, 115, 22, 0.1); }
+            100% { box-shadow: 0 0 25px rgba(249, 115, 22, 0.6), inset 0 0 12px rgba(249, 115, 22, 0.25); }
+        }
+        .logo-container img { max-width: 220px; height: auto; position: relative; z-index: 2; }
+        
+        h1 { font-size: 1.4rem; margin-bottom: 5px; color: #fff; text-align: center; }
+        p.subtitle { text-align: center; color: #94a3b8; font-size: 0.85rem; margin-bottom: 20px; }
+
+        /* Navegação por Abas */
+        .nav-tabs { display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
+        .tab-btn { flex: 1; padding: 12px; font-weight: bold; background: #0f172a; border: 1px solid var(--border); color: #94a3b8; border-radius: 6px; cursor: pointer; transition: 0.3s; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; }
+        .tab-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3); }
+        
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Formulário */
+        .grid-info { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        @media (max-width: 600px) { .grid-info { grid-template-columns: 1fr; } }
+
+        label { display: block; margin-top: 10px; font-weight: 600; font-size: 0.85rem; color: #cbd5e1; }
+        input[type="text"], textarea { width: 100%; padding: 10px; margin-top: 5px; background: #0f172a; border: 1px solid var(--border); border-radius: 6px; color: #fff; box-sizing: border-box; font-size: 0.9rem; outline: none; font-family: inherit; }
+        input[type="text"]:focus, textarea:focus { border-color: var(--primary); }
+
+        /* Critérios */
+        .criterio-card { background: #0f172a; border: 1px solid var(--border); border-radius: 8px; padding: 12px 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; gap: 15px; }
+        .criterio-info h4 { margin: 0 0 3px 0; color: #fff; font-size: 0.92rem; }
+        .criterio-info p { margin: 0; color: #94a3b8; font-size: 0.8rem; line-height: 1.3; }
+        
+        .nota-box { display: flex; flex-direction: column; align-items: center; min-width: 75px; }
+        .nota-box span { font-size: 0.7rem; color: #94a3b8; margin-bottom: 3px; }
+        input[type="number"] { width: 70px; padding: 8px; background: var(--card); border: 2px solid var(--primary); border-radius: 6px; color: #fff; font-size: 1rem; font-weight: bold; text-align: center; outline: none; }
+        
+        /* Placar Total */
+        .placar-total { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); color: #fff; padding: 15px 20px; border-radius: 8px; margin: 20px 0; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3); }
+        .placar-total span.label-total { font-weight: bold; font-size: 1rem; text-transform: uppercase; }
+        .placar-total span.valor-total { font-size: 1.6rem; font-weight: 800; }
+
+        /* Botões */
+        button.action-btn { width: 100%; color: #fff; border: none; padding: 12px; font-weight: bold; border-radius: 6px; margin-top: 12px; cursor: pointer; transition: 0.3s; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-submit { background: var(--primary); }
+        .btn-submit:hover { background: #ea580c; }
+        .btn-export { background: #10b981; }
+        .btn-export:hover { background: #059669; }
+        .btn-clear { background: #ef4444; }
+        .btn-clear:hover { background: #dc2626; }
+
+        /* Dashboard & Ranking */
+        .podium-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+        .podium-card { background: #0f172a; border: 1px solid var(--border); border-radius: 8px; padding: 15px; text-align: center; position: relative; }
+        .podium-card.gold { border-color: #f59e0b; background: linear-gradient(180deg, #1e293b 0%, #292524 100%); }
+        .podium-card.silver { border-color: #94a3b8; }
+        .podium-card.bronze { border-color: #b45309; }
+        .podium-medal { font-size: 1.5rem; margin-bottom: 5px; }
+        .podium-team { font-weight: bold; font-size: 0.95rem; color: #fff; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .podium-score { font-size: 1.2rem; font-weight: 800; color: var(--primary); }
+
+        .ranking-table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #0f172a; border-radius: 8px; overflow: hidden; }
+        .ranking-table th, .ranking-table td { padding: 12px 15px; text-align: left; font-size: 0.9rem; border-bottom: 1px solid var(--border); }
+        .ranking-table th { background: #162032; color: #94a3b8; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; }
+        .ranking-table tr:last-child td { border-bottom: none; }
+        .ranking-table tr:hover { background: #162032; }
+
+        .admin-section { margin-top: 30px; padding-top: 20px; border-top: 1px dashed var(--border); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo-container">
+            <img src="logo.JPG" alt="Logo Anhanguera Osasco">
+        </div>
+        
+        <h1>HACKATHON DE TI 2026/2</h1>
+        <p class="subtitle">Faculdade Anhanguera Osasco • Sistema Integrado da Banca</p>
+        
+        <!-- Navegação -->
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="mudarAba('avaliacao')">📝 Ficha de Avaliação</button>
+            <button class="tab-btn" onclick="mudarAba('dashboard')">🏆 Dashboard & Ranking</button>
+        </div>
+
+        <!-- ABA 1: FICHA DE AVALIAÇÃO -->
+        <div id="aba-avaliacao" class="tab-content active">
+            <form id="formAvaliacao">
+                <div class="grid-info">
+                    <div>
+                        <label for="avaliador">Professor(a) Avaliador(a):</label>
+                        <input type="text" id="avaliador" required placeholder="Seu nome completo">
+                    </div>
+                    <div>
+                        <label for="equipe">Nome da Equipe / Projeto:</label>
+                        <input type="text" id="equipe" required placeholder="Ex: EcoOsasco">
+                    </div>
+                </div>
+
+                <label for="integrantes" style="margin-bottom: 15px;">Integrantes (Opcional):</label>
+                <input type="text" id="integrantes" placeholder="Nomes ou RAs dos alunos" style="margin-bottom: 20px;">
+
+                <h3 style="color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-bottom: 15px; font-size: 1rem;">Critérios de Avaliação (0,0 a 5,0 cada)</h3>
+
+                <div id="listaCriterios"></div>
+
+                <div class="placar-total">
+                    <span class="label-total">Nota Final da Equipe:</span>
+                    <span class="valor-total" id="notaTotalDisplay">0.0 / 50.0</span>
+                </div>
+
+                <label for="parecer">Parecer / Feedback da Banca:</label>
+                <textarea id="parecer" rows="2" placeholder="Pontos fortes, sugestões ou observações..."></textarea>
+
+                <button type="submit" class="action-btn btn-submit">Registrar Avaliação</button>
+            </form>
+        </div>
+
+        <!-- ABA 2: DASHBOARD & RANKING -->
+        <div id="aba-dashboard" class="tab-content">
+            <h3 style="color: #fff; margin-top: 0; font-size: 1.1rem; margin-bottom: 15px;">Pódio Geral</h3>
+            <div id="podiumContainer" class="podium-grid">
+                <!-- Preenchido via JS -->
+            </div>
+
+            <h3 style="color: #fff; margin-top: 25px; font-size: 1.1rem; margin-bottom: 10px;">Classificação Completa</h3>
+            <div style="overflow-x: auto;">
+                <table class="ranking-table">
+                    <thead>
+                        <tr>
+                            <th>Pos</th>
+                            <th>Equipe / Projeto</th>
+                            <th>Avaliações</th>
+                            <th>Média Final</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rankingTabelaBody">
+                        <!-- Preenchido via JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="admin-section">
+                <h3 style="margin: 0; color: #94a3b8; font-size: 0.95rem; margin-bottom: 10px;">Controle Administrativo</h3>
+                <button type="button" class="action-btn btn-export" onclick="exportarRelatorioGeral()">Descarregar Relatório Geral (.TXT)</button>
+                <button type="button" class="action-btn btn-clear" onclick="limparTodasAvaliacoes()">Limpar Todas as Avaliações</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SENHA_HASH_CORRETA = "9576141106e1a2d2e67f8fc384336472cdad8ba9356e907cdd5329c13653f9d8";
+
+        const criterios = [
+            { id: 1, titulo: "1. Relevância e Impacto Prático", desc: "Resolve um problema real com impacto claro para os usuários ou comunidade." },
+            { id: 2, titulo: "2. Funcionalidade e Aplicabilidade (MVP)", desc: "Protótipo funcional na prática com as principais entregas testáveis." },
+            { id: 3, titulo: "3. Aplicação da Metodologia (Ciclo PDCA)", desc: "Documentação estruturada seguindo Plan, Do, Check e Act de forma coerente." },
+            { id: 4, titulo: "4. Inovação e Criatividade Tecnológica", desc: "Diferencial criativo, uso de boas tecnologias ou abordagem inovadora." },
+            { id: 5, titulo: "5. Interface e Experiência do Usuário (UI/UX)", desc: "Navegação intuitiva, agradável e pensada para facilitar o uso." },
+            { id: 6, titulo: "6. Arquitetura, Código e Organização", desc: "Código limpo, bem estruturado e com boas práticas de desenvolvimento." },
+            { id: 7, titulo: "7. Viabilidade e Sustentabilidade", desc: "Potencial real de implementação e continuidade sem barreiras excessivas." },
+            { id: 8, titulo: "8. Clareza e Qualidade do Pitch", desc: "Comunicação objetiva, clara e convincente durante a apresentação." },
+            { id: 9, titulo: "9. Trabalho em Equipe e Sinergia", desc: "Integração entre os membros (ADS, SI, GTI) e divisão equilibrada de tarefas." },
+            { id: 10, titulo: "10. Tratamento de Erros e Robustez", desc: "Validação de entradas inválidas, estabilidade e mensagens amigáveis." }
+        ];
+
+        // Renderizar Critérios (0 a 5)
+        const containerCriterios = document.getElementById('listaCriterios');
+        criterios.forEach(c => {
+            containerCriterios.innerHTML += `
+                <div class="criterio-card">
+                    <div class="criterio-info">
+                        <h4>${c.titulo}</h4>
+                        <p>${c.desc}</p>
+                    </div>
+                    <div class="nota-box">
+                        <span>Nota (0 a 5)</span>
+                        <input type="number" class="nota-input" id="nota_${c.id}" min="0" max="5" step="0.5" value="0.0" required oninput="calcularTotal()">
+                    </div>
+                </div>
+            `;
+        });
+
+        function calcularTotal() {
+            const inputs = document.querySelectorAll('.nota-input');
+            let soma = 0;
+            inputs.forEach(input => {
+                let val = parseFloat(input.value);
+                if (isNaN(val)) val = 0;
+                if (val > 5) { val = 5; input.value = "5.0"; }
+                if (val < 0) { val = 0; input.value = "0.0"; }
+                soma += val;
+            });
+            document.getElementById('notaTotalDisplay').textContent = `${soma.toFixed(1)} / 50.0`;
+            return soma.toFixed(1);
+        }
+
+        function mudarAba(aba) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            if (aba === 'avaliacao') {
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+                document.getElementById('aba-avaliacao').classList.add('active');
+            } else {
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                document.getElementById('aba-dashboard').classList.add('active');
+                atualizarDashboard();
+            }
+        }
+
+        // Salvar Avaliação
+        document.getElementById('formAvaliacao').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const notaFinal = parseFloat(calcularTotal());
+            
+            const notasDetalhadas = criterios.map(c => ({
+                criterio: c.titulo,
+                nota: parseFloat(document.getElementById(`nota_${c.id}`).value || 0).toFixed(1)
+            }));
+
+            const novaAvaliacao = {
+                data: new Date().toLocaleString('pt-BR'),
+                avaliador: document.getElementById('avaliador').value.trim(),
+                equipe: document.getElementById('equipe').value.trim(),
+                integrantes: document.getElementById('integrantes').value.trim() || "Não informado",
+                notas: notasDetalhadas,
+                notaFinal: notaFinal,
+                parecer: document.getElementById('parecer').value.trim() || "Sem observações."
+            };
+
+            let avaliacoes = JSON.parse(localStorage.getItem('hackathon_avaliacoes') || '[]');
+            avaliacoes.push(novaAvaliacao);
+            localStorage.setItem('hackathon_avaliacoes', JSON.stringify(avaliacoes));
+
+            alert(`Avaliação da equipe "${novaAvaliacao.equipe}" (Total: ${notaFinal} pts) salva com sucesso!`);
+            
+            const profAtual = document.getElementById('avaliador').value;
+            this.reset();
+            document.getElementById('avaliador').value = profAtual;
+            calcularTotal();
+        });
+
+        // Atualizar Dashboard e Ranking
+        function atualizarDashboard() {
+            const avaliacoes = JSON.parse(localStorage.getItem('hackathon_avaliacoes') || '[]');
+            
+            // Agrupar por equipe (normalizando o nome em maiúsculas para evitar duplicatas por digitação)
+            let equipesMap = {};
+            avaliacoes.forEach(av => {
+                let nomeEquipeOriginal = av.equipe;
+                let chave = nomeEquipeOriginal.toUpperCase();
+                if (!equipesMap[chave]) {
+                    equipesMap[chave] = { nome: nomeEquipeOriginal, totalNotas: 0, qtd: 0 };
+                }
+                equipesMap[chave].totalNotas += av.notaFinal;
+                equipesMap[chave].qtd += 1;
+            });
+
+            let ranking = Object.values(equipesMap).map(eq => ({
+                nome: eq.nome,
+                media: eq.totalNotas / eq.qtd,
+                avaliacoes: eq.qtd
+            })).sort((a, b) => b.media - a.media);
+
+            // Renderizar Pódio
+            let podiumHTML = '';
+            const medalhas = ['🥇', '🥈', '🥉'];
+            const classesCard = ['gold', 'silver', 'bronze'];
+            
+            for (let i = 0; i < 3; i++) {
+                if (i < ranking.length) {
+                    podiumHTML += `
+                        <div class="podium-card ${classesCard[i]}">
+                            <div class="podium-medal">${medalhas[i]}</div>
+                            <div class="podium-team">${ranking[i].nome}</div>
+                            <div class="podium-score">${ranking[i].media.toFixed(1)} <span style="font-size:0.7rem; color:#94a3b8;">pts</span></div>
+                        </div>
+                    `;
+                } else {
+                    podiumHTML += `
+                        <div class="podium-card" style="opacity: 0.4;">
+                            <div class="podium-medal">${medalhas[i]}</div>
+                            <div class="podium-team">—</div>
+                            <div class="podium-score">0.0</div>
+                        </div>
+                    `;
+                }
+            }
+            document.getElementById('podiumContainer').innerHTML = podiumHTML;
+
+            // Renderizar Tabela Completa
+            let tabelaHTML = '';
+            if (ranking.length === 0) {
+                tabelaHTML = `<tr><td colspan="4" style="text-align: center; color: #94a3b8;">Nenhuma avaliação registrada ainda.</td></tr>`;
+            } else {
+                ranking.forEach((eq, index) => {
+                    tabelaHTML += `
+                        <tr>
+                            <td style="font-weight: bold; color: var(--primary);">#${index + 1}</td>
+                            <td style="font-weight: 600; color: #fff;">${eq.nome}</td>
+                            <td>${eq.avaliacoes} ${eq.avaliacoes === 1 ? 'avaliação' : 'avaliações'}</td>
+                            <td style="font-weight: bold; color: #10b981;">${eq.media.toFixed(1)} / 50.0</td>
+                        </tr>
+                    `;
+                });
+            }
+            document.getElementById('rankingTabelaBody').innerHTML = tabelaHTML;
+        }
+
+        async function verificarSenha(senhaDigitada) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(senhaDigitada);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('') === SENHA_HASH_CORRETA;
+        }
+
+        // Exportar Relatório Geral
+        async function exportarRelatorioGeral() {
+            const senha = prompt("Introduza a senha de administrador para exportar o relatório:");
+            if (!senha) return;
+
+            if (!(await verificarSenha(senha))) {
+                alert("Senha incorreta. Acesso negado.");
+                return;
+            }
+
+            let avaliacoes = JSON.parse(localStorage.getItem('hackathon_avaliacoes') || '[]');
+            if (avaliacoes.length === 0) {
+                alert('Nenhuma avaliação encontrada.');
+                return;
+            }
+
+            let txt = "========================================================\n";
+            txt += "   RELATÓRIO OFICIAL CONSOLIDADO — HACKATHON TI 2026/2\n";
+            txt += "             FACULDADE ANHANGUERA OSASCO\n";
+            txt += "========================================================\n";
+            txt += `Gerado em: ${new Date().toLocaleString('pt-BR')}\n\n`;
+
+            avaliacoes.forEach((av, index) => {
+                txt += `--- AVALIAÇÃO #${index + 1} ---\n`;
+                txt += `Data/Hora: ${av.data}\n`;
+                txt += `Avaliador(a): ${av.avaliador}\n`;
+                txt += `Equipe/Projeto: ${av.equipe}\n`;
+                txt += `Integrantes: ${av.integrantes}\n\n`;
+                txt += `NOTAS (0 a 5):\n`;
+                av.notas.forEach(n => {
+                    txt += `  • ${n.criterio}: ${n.nota}\n`;
+                });
+                txt += `\n>>> TOTAL DA AVALIAÇÃO: ${av.notaFinal} / 50.0 <<<\n`;
+                txt += `Parecer: ${av.parecer}\n`;
+                txt += "--------------------------------------------------------\n\n";
+            });
+
+            const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `relatorio_geral_hackathon_${new Date().toISOString().slice(0,10)}.txt`;
+            link.click();
+        }
+
+        // Limpar Base
+        async function limparTodasAvaliacoes() {
+            const senha = prompt("Introduza a senha de administrador para APAGAR todas as avaliações:");
+            if (!senha) return;
+
+            if (!(await verificarSenha(senha))) {
+                alert("Senha incorreta. Acesso negado.");
+                return;
+            }
+
+            if (confirm("ATENÇÃO: Deseja apagar permanentemente todas as avaliações salvas?")) {
+                localStorage.removeItem('hackathon_avaliacoes');
+                atualizarDashboard();
+                alert("Base limpa com sucesso!");
+            }
+        }
+    </script>
+</body>
+</html>
