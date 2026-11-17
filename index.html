@@ -8,7 +8,7 @@
     <style>
         :root { --primary: #f97316; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --border: #334155; }
         body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
-        .container { max-width: 800px; margin: 0 auto; background: var(--card); padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border-top: 5px solid var(--primary); }
+        .container { max-width: 820px; margin: 0 auto; background: var(--card); padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border-top: 5px solid var(--primary); }
         
         /* Efeito Especial na Logomarca */
         .logo-container { 
@@ -28,7 +28,13 @@
         .logo-container img { max-width: 220px; height: auto; position: relative; z-index: 2; }
         
         h1 { font-size: 1.4rem; margin-bottom: 5px; color: #fff; text-align: center; }
-        p.subtitle { text-align: center; color: #94a3b8; font-size: 0.85rem; margin-bottom: 20px; }
+        p.subtitle { text-align: center; color: #94a3b8; font-size: 0.85rem; margin-bottom: 15px; }
+
+        /* Badge de Status do Banco */
+        .db-status { text-align: center; margin-bottom: 20px; }
+        .badge { display: inline-block; padding: 5px 12px; border-radius: 999px; font-size: 0.78rem; font-weight: 600; }
+        .badge-cloud { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid #059669; }
+        .badge-local { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid #d97706; }
 
         /* Navegação por Abas */
         .nav-tabs { display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
@@ -53,7 +59,7 @@
         
         .nota-box { display: flex; flex-direction: column; align-items: center; min-width: 75px; }
         .nota-box span { font-size: 0.7rem; color: #94a3b8; margin-bottom: 3px; }
-        input[type="number"] { width: 70px; padding: 8px; background: var(--card); border: 2px solid var(--primary); border-radius: 6px; color: #fff; font-size: 1rem; font-weight: bold; text-align: center; outline: none; }
+        input[type="number"] { width: 72px; padding: 8px; background: var(--card); border: 2px solid var(--primary); border-radius: 6px; color: #fff; font-size: 1rem; font-weight: bold; text-align: center; outline: none; }
         
         /* Placar Total */
         .placar-total { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); color: #fff; padding: 15px 20px; border-radius: 8px; margin: 20px 0; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3); }
@@ -62,8 +68,11 @@
 
         /* Botões */
         button.action-btn { width: 100%; color: #fff; border: none; padding: 12px; font-weight: bold; border-radius: 6px; margin-top: 12px; cursor: pointer; transition: 0.3s; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px; }
+        button.action-btn:disabled { opacity: 0.6; cursor: not-allowed; }
         .btn-submit { background: var(--primary); }
-        .btn-submit:hover { background: #ea580c; }
+        .btn-submit:hover:not(:disabled) { background: #ea580c; }
+        .btn-refresh { background: #3b82f6; margin-top: 0; margin-bottom: 15px; }
+        .btn-refresh:hover { background: #2563eb; }
         .btn-export { background: #10b981; }
         .btn-export:hover { background: #059669; }
         .btn-clear { background: #ef4444; }
@@ -71,7 +80,8 @@
 
         /* Dashboard & Ranking */
         .podium-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
-        .podium-card { background: #0f172a; border: 1px solid var(--border); border-radius: 8px; padding: 15px; text-align: center; position: relative; }
+        @media (max-width: 600px) { .podium-grid { grid-template-columns: 1fr; } }
+        .podium-card { background: #0f172a; border: 1px solid var(--border); border-radius: 8px; padding: 15px; text-align: center; }
         .podium-card.gold { border-color: #f59e0b; background: linear-gradient(180deg, #1e293b 0%, #292524 100%); }
         .podium-card.silver { border-color: #94a3b8; }
         .podium-card.bronze { border-color: #b45309; }
@@ -79,7 +89,7 @@
         .podium-team { font-weight: bold; font-size: 0.95rem; color: #fff; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .podium-score { font-size: 1.2rem; font-weight: 800; color: var(--primary); }
 
-        .ranking-table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #0f172a; border-radius: 8px; overflow: hidden; }
+        .ranking-table { width: 100%; border-collapse: collapse; margin-top: 10px; background: #0f172a; border-radius: 8px; overflow: hidden; }
         .ranking-table th, .ranking-table td { padding: 12px 15px; text-align: left; font-size: 0.9rem; border-bottom: 1px solid var(--border); }
         .ranking-table th { background: #162032; color: #94a3b8; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; }
         .ranking-table tr:last-child td { border-bottom: none; }
@@ -96,6 +106,10 @@
         
         <h1>HACKATHON DE TI 2026/2</h1>
         <p class="subtitle">Faculdade Anhanguera Osasco • Sistema Integrado da Banca</p>
+
+        <div class="db-status">
+            <span id="statusBadge" class="badge badge-local">Verificando conexão com banco de dados...</span>
+        </div>
         
         <!-- Navegação -->
         <div class="nav-tabs">
@@ -132,16 +146,16 @@
                 <label for="parecer">Parecer / Feedback da Banca:</label>
                 <textarea id="parecer" rows="2" placeholder="Pontos fortes, sugestões ou observações..."></textarea>
 
-                <button type="submit" class="action-btn btn-submit">Registrar Avaliação</button>
+                <button type="submit" id="btnSalvar" class="action-btn btn-submit">Registrar Avaliação na Base</button>
             </form>
         </div>
 
         <!-- ABA 2: DASHBOARD & RANKING -->
         <div id="aba-dashboard" class="tab-content">
-            <h3 style="color: #fff; margin-top: 0; font-size: 1.1rem; margin-bottom: 15px;">Pódio Geral</h3>
-            <div id="podiumContainer" class="podium-grid">
-                <!-- Preenchido via JS -->
-            </div>
+            <button type="button" class="action-btn btn-refresh" onclick="atualizarDashboard()">🔄 Atualizar Dados da Base</button>
+
+            <h3 style="color: #fff; margin-top: 10px; font-size: 1.1rem; margin-bottom: 15px;">Pódio Geral</h3>
+            <div id="podiumContainer" class="podium-grid"></div>
 
             <h3 style="color: #fff; margin-top: 25px; font-size: 1.1rem; margin-bottom: 10px;">Classificação Completa</h3>
             <div style="overflow-x: auto;">
@@ -150,25 +164,31 @@
                         <tr>
                             <th>Pos</th>
                             <th>Equipe / Projeto</th>
-                            <th>Avaliações</th>
+                            <th>Banca (Avaliadores)</th>
                             <th>Média Final</th>
                         </tr>
                     </thead>
-                    <tbody id="rankingTabelaBody">
-                        <!-- Preenchido via JS -->
-                    </tbody>
+                    <tbody id="rankingTabelaBody"></tbody>
                 </table>
             </div>
 
             <div class="admin-section">
                 <h3 style="margin: 0; color: #94a3b8; font-size: 0.95rem; margin-bottom: 10px;">Controle Administrativo</h3>
                 <button type="button" class="action-btn btn-export" onclick="exportarRelatorioGeral()">Descarregar Relatório Geral (.TXT)</button>
-                <button type="button" class="action-btn btn-clear" onclick="limparTodasAvaliacoes()">Limpar Todas as Avaliações</button>
+                <button type="button" class="action-btn btn-clear" onclick="limparTodasAvaliacoes()">Limpar Base de Dados</button>
             </div>
         </div>
     </div>
 
     <script>
+        https://hackathon-anhanguera-osasco-default-rtdb.firebaseio.com/
+        // =========================================================================
+        // CONFIGURAÇÃO DO BANCO DE DADOS (FIREBASE REALTIME DATABASE)
+        // Cole abaixo a URL do seu Firebase (ex: "https://seu-projeto-default-rtdb.firebaseio.com")
+        // Deixe vazio "" para operar em modo local de teste.
+        // =========================================================================
+        const FIREBASE_DB_URL = ""; 
+
         const SENHA_HASH_CORRETA = "9576141106e1a2d2e67f8fc384336472cdad8ba9356e907cdd5329c13653f9d8";
 
         const criterios = [
@@ -183,6 +203,58 @@
             { id: 9, titulo: "9. Trabalho em Equipe e Sinergia", desc: "Integração entre os membros (ADS, SI, GTI) e divisão equilibrada de tarefas." },
             { id: 10, titulo: "10. Tratamento de Erros e Robustez", desc: "Validação de entradas inválidas, estabilidade e mensagens amigáveis." }
         ];
+
+        // Verifica status da conexão
+        const usandoNuvem = FIREBASE_DB_URL.trim().startsWith("http");
+        const statusBadge = document.getElementById('statusBadge');
+        if (usandoNuvem) {
+            statusBadge.textContent = "🟢 Conectado à Base de Dados Compartilhada (Sincronização Multi-Dispositivos)";
+            statusBadge.className = "badge badge-cloud";
+        } else {
+            statusBadge.textContent = "🟡 Modo Local (Configure a URL do Firebase no código para compartilhar entre navegadores)";
+            statusBadge.className = "badge badge-local";
+        }
+
+        // Camada de Abstração do Banco de Dados (Firebase REST API + Fallback Local)
+        const DB = {
+            async listar() {
+                if (usandoNuvem) {
+                    const url = `${FIREBASE_DB_URL.replace(/\/$/, '')}/avaliacoes.json`;
+                    const resp = await fetch(url);
+                    if (!resp.ok) throw new Error("Erro ao consultar base de dados.");
+                    const data = await resp.json();
+                    if (!data) return [];
+                    return Object.keys(data).map(key => ({ id: key, ...data[key] }));
+                } else {
+                    return JSON.parse(localStorage.getItem('hackathon_avaliacoes') || '[]');
+                }
+            },
+            async salvar(registro) {
+                if (usandoNuvem) {
+                    const url = `${FIREBASE_DB_URL.replace(/\/$/, '')}/avaliacoes.json`;
+                    const resp = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(registro)
+                    });
+                    if (!resp.ok) throw new Error("Erro ao salvar na base de dados.");
+                    return await resp.json();
+                } else {
+                    let lista = JSON.parse(localStorage.getItem('hackathon_avaliacoes') || '[]');
+                    lista.push(registro);
+                    localStorage.setItem('hackathon_avaliacoes', JSON.stringify(lista));
+                }
+            },
+            async limparTudo() {
+                if (usandoNuvem) {
+                    const url = `${FIREBASE_DB_URL.replace(/\/$/, '')}/avaliacoes.json`;
+                    const resp = await fetch(url, { method: 'DELETE' });
+                    if (!resp.ok) throw new Error("Erro ao limpar base de dados.");
+                } else {
+                    localStorage.removeItem('hackathon_avaliacoes');
+                }
+            }
+        };
 
         // Renderizar Critérios (0 a 5)
         const containerCriterios = document.getElementById('listaCriterios');
@@ -229,103 +301,122 @@
             }
         }
 
-        // Salvar Avaliação
-        document.getElementById('formAvaliacao').addEventListener('submit', function(e) {
+        // Submeter Avaliação
+        document.getElementById('formAvaliacao').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const notaFinal = parseFloat(calcularTotal());
-            
-            const notasDetalhadas = criterios.map(c => ({
-                criterio: c.titulo,
-                nota: parseFloat(document.getElementById(`nota_${c.id}`).value || 0).toFixed(1)
-            }));
+            const btn = document.getElementById('btnSalvar');
+            btn.disabled = true;
+            btn.textContent = "Salvando na Base...";
 
-            const novaAvaliacao = {
-                data: new Date().toLocaleString('pt-BR'),
-                avaliador: document.getElementById('avaliador').value.trim(),
-                equipe: document.getElementById('equipe').value.trim(),
-                integrantes: document.getElementById('integrantes').value.trim() || "Não informado",
-                notas: notasDetalhadas,
-                notaFinal: notaFinal,
-                parecer: document.getElementById('parecer').value.trim() || "Sem observações."
-            };
+            try {
+                const notaFinal = parseFloat(calcularTotal());
+                const notasDetalhadas = criterios.map(c => ({
+                    criterio: c.titulo,
+                    nota: parseFloat(document.getElementById(`nota_${c.id}`).value || 0).toFixed(1)
+                }));
 
-            let avaliacoes = JSON.parse(localStorage.getItem('hackathon_avaliacoes') || '[]');
-            avaliacoes.push(novaAvaliacao);
-            localStorage.setItem('hackathon_avaliacoes', JSON.stringify(avaliacoes));
+                const novaAvaliacao = {
+                    data: new Date().toLocaleString('pt-BR'),
+                    avaliador: document.getElementById('avaliador').value.trim(),
+                    equipe: document.getElementById('equipe').value.trim(),
+                    integrantes: document.getElementById('integrantes').value.trim() || "Não informado",
+                    notas: notasDetalhadas,
+                    notaFinal: notaFinal,
+                    parecer: document.getElementById('parecer').value.trim() || "Sem observações."
+                };
 
-            alert(`Avaliação da equipe "${novaAvaliacao.equipe}" (Total: ${notaFinal} pts) salva com sucesso!`);
-            
-            const profAtual = document.getElementById('avaliador').value;
-            this.reset();
-            document.getElementById('avaliador').value = profAtual;
-            calcularTotal();
+                await DB.salvar(novaAvaliacao);
+
+                alert(`Avaliação da equipe "${novaAvaliacao.equipe}" (Total: ${notaFinal} pts) registrada na base de dados!`);
+                
+                const profAtual = document.getElementById('avaliador').value;
+                this.reset();
+                document.getElementById('avaliador').value = profAtual;
+                calcularTotal();
+            } catch (erro) {
+                alert("Falha ao salvar avaliação: " + erro.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Registrar Avaliação na Base";
+            }
         });
 
-        // Atualizar Dashboard e Ranking
-        function atualizarDashboard() {
-            const avaliacoes = JSON.parse(localStorage.getItem('hackathon_avaliacoes') || '[]');
-            
-            // Agrupar por equipe (normalizando o nome em maiúsculas para evitar duplicatas por digitação)
-            let equipesMap = {};
-            avaliacoes.forEach(av => {
-                let nomeEquipeOriginal = av.equipe;
-                let chave = nomeEquipeOriginal.toUpperCase();
-                if (!equipesMap[chave]) {
-                    equipesMap[chave] = { nome: nomeEquipeOriginal, totalNotas: 0, qtd: 0 };
+        // Atualizar Dashboard e Ranking a partir do Banco de Dados
+        async function atualizarDashboard() {
+            const tbody = document.getElementById('rankingTabelaBody');
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #94a3b8;">Carregando dados da base...</td></tr>`;
+
+            try {
+                const avaliacoes = await DB.listar();
+                
+                let equipesMap = {};
+                avaliacoes.forEach(av => {
+                    let nomeEquipeOriginal = av.equipe;
+                    let chave = nomeEquipeOriginal.toUpperCase().trim();
+                    if (!equipesMap[chave]) {
+                        equipesMap[chave] = { 
+                            nome: nomeEquipeOriginal, 
+                            totalNotas: 0, 
+                            qtd: 0,
+                            avaliadores: []
+                        };
+                    }
+                    equipesMap[chave].totalNotas += Number(av.notaFinal);
+                    equipesMap[chave].qtd += 1;
+                    if (!equipesMap[chave].avaliadores.includes(av.avaliador)) {
+                        equipesMap[chave].avaliadores.push(av.avaliador);
+                    }
+                });
+
+                let ranking = Object.values(equipesMap).map(eq => ({
+                    nome: eq.nome,
+                    media: eq.totalNotas / eq.qtd,
+                    avaliacoes: eq.qtd,
+                    avaliadores: eq.avaliadores.join(', ')
+                })).sort((a, b) => b.media - a.media);
+
+                // Pódio
+                let podiumHTML = '';
+                const medalhas = ['🥇', '🥈', '🥉'];
+                const classesCard = ['gold', 'silver', 'bronze'];
+                
+                for (let i = 0; i < 3; i++) {
+                    if (i < ranking.length) {
+                        podiumHTML += `
+                            <div class="podium-card ${classesCard[i]}">
+                                <div class="podium-medal">${medalhas[i]}</div>
+                                <div class="podium-team">${ranking[i].nome}</div>
+                                <div class="podium-score">${ranking[i].media.toFixed(1)} <span style="font-size:0.7rem; color:#94a3b8;">pts</span></div>
+                            </div>
+                        `;
+                    } else {
+                        podiumHTML += `
+                            <div class="podium-card" style="opacity: 0.4;">
+                                <div class="podium-medal">${medalhas[i]}</div>
+                                <div class="podium-team">—</div>
+                                <div class="podium-score">0.0</div>
+                            </div>
+                        `;
+                    }
                 }
-                equipesMap[chave].totalNotas += av.notaFinal;
-                equipesMap[chave].qtd += 1;
-            });
+                document.getElementById('podiumContainer').innerHTML = podiumHTML;
 
-            let ranking = Object.values(equipesMap).map(eq => ({
-                nome: eq.nome,
-                media: eq.totalNotas / eq.qtd,
-                avaliacoes: eq.qtd
-            })).sort((a, b) => b.media - a.media);
-
-            // Renderizar Pódio
-            let podiumHTML = '';
-            const medalhas = ['🥇', '🥈', '🥉'];
-            const classesCard = ['gold', 'silver', 'bronze'];
-            
-            for (let i = 0; i < 3; i++) {
-                if (i < ranking.length) {
-                    podiumHTML += `
-                        <div class="podium-card ${classesCard[i]}">
-                            <div class="podium-medal">${medalhas[i]}</div>
-                            <div class="podium-team">${ranking[i].nome}</div>
-                            <div class="podium-score">${ranking[i].media.toFixed(1)} <span style="font-size:0.7rem; color:#94a3b8;">pts</span></div>
-                        </div>
-                    `;
+                // Tabela
+                if (ranking.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #94a3b8;">Nenhuma avaliação encontrada na base de dados.</td></tr>`;
                 } else {
-                    podiumHTML += `
-                        <div class="podium-card" style="opacity: 0.4;">
-                            <div class="podium-medal">${medalhas[i]}</div>
-                            <div class="podium-team">—</div>
-                            <div class="podium-score">0.0</div>
-                        </div>
-                    `;
-                }
-            }
-            document.getElementById('podiumContainer').innerHTML = podiumHTML;
-
-            // Renderizar Tabela Completa
-            let tabelaHTML = '';
-            if (ranking.length === 0) {
-                tabelaHTML = `<tr><td colspan="4" style="text-align: center; color: #94a3b8;">Nenhuma avaliação registrada ainda.</td></tr>`;
-            } else {
-                ranking.forEach((eq, index) => {
-                    tabelaHTML += `
+                    tbody.innerHTML = ranking.map((eq, index) => `
                         <tr>
                             <td style="font-weight: bold; color: var(--primary);">#${index + 1}</td>
                             <td style="font-weight: 600; color: #fff;">${eq.nome}</td>
-                            <td>${eq.avaliacoes} ${eq.avaliacoes === 1 ? 'avaliação' : 'avaliações'}</td>
+                            <td style="font-size: 0.82rem; color: #cbd5e1;">${eq.avaliacoes}x (${eq.avaliadores})</td>
                             <td style="font-weight: bold; color: #10b981;">${eq.media.toFixed(1)} / 50.0</td>
                         </tr>
-                    `;
-                });
+                    `).join('');
+                }
+            } catch (erro) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #ef4444;">Erro ao carregar ranking: ${erro.message}</td></tr>`;
             }
-            document.getElementById('rankingTabelaBody').innerHTML = tabelaHTML;
         }
 
         async function verificarSenha(senhaDigitada) {
@@ -336,7 +427,7 @@
             return hashArray.map(b => b.toString(16).padStart(2, '0')).join('') === SENHA_HASH_CORRETA;
         }
 
-        // Exportar Relatório Geral
+        // Exportar Relatório Geral da Base
         async function exportarRelatorioGeral() {
             const senha = prompt("Introduza a senha de administrador para exportar o relatório:");
             if (!senha) return;
@@ -346,43 +437,47 @@
                 return;
             }
 
-            let avaliacoes = JSON.parse(localStorage.getItem('hackathon_avaliacoes') || '[]');
-            if (avaliacoes.length === 0) {
-                alert('Nenhuma avaliação encontrada.');
-                return;
-            }
+            try {
+                const avaliacoes = await DB.listar();
+                if (avaliacoes.length === 0) {
+                    alert('Nenhuma avaliação encontrada na base.');
+                    return;
+                }
 
-            let txt = "========================================================\n";
-            txt += "   RELATÓRIO OFICIAL CONSOLIDADO — HACKATHON TI 2026/2\n";
-            txt += "             FACULDADE ANHANGUERA OSASCO\n";
-            txt += "========================================================\n";
-            txt += `Gerado em: ${new Date().toLocaleString('pt-BR')}\n\n`;
+                let txt = "========================================================\n";
+                txt += "   RELATÓRIO OFICIAL CONSOLIDADO — HACKATHON TI 2026/2\n";
+                txt += "             FACULDADE ANHANGUERA OSASCO\n";
+                txt += "========================================================\n";
+                txt += `Gerado em: ${new Date().toLocaleString('pt-BR')}\n\n`;
 
-            avaliacoes.forEach((av, index) => {
-                txt += `--- AVALIAÇÃO #${index + 1} ---\n`;
-                txt += `Data/Hora: ${av.data}\n`;
-                txt += `Avaliador(a): ${av.avaliador}\n`;
-                txt += `Equipe/Projeto: ${av.equipe}\n`;
-                txt += `Integrantes: ${av.integrantes}\n\n`;
-                txt += `NOTAS (0 a 5):\n`;
-                av.notas.forEach(n => {
-                    txt += `  • ${n.criterio}: ${n.nota}\n`;
+                avaliacoes.forEach((av, index) => {
+                    txt += `--- AVALIAÇÃO #${index + 1} ---\n`;
+                    txt += `Data/Hora: ${av.data}\n`;
+                    txt += `Avaliador(a): ${av.avaliador}\n`;
+                    txt += `Equipe/Projeto: ${av.equipe}\n`;
+                    txt += `Integrantes: ${av.integrantes}\n\n`;
+                    txt += `NOTAS (0 a 5):\n`;
+                    av.notas.forEach(n => {
+                        txt += `  • ${n.criterio}: ${n.nota}\n`;
+                    });
+                    txt += `\n>>> TOTAL DA AVALIAÇÃO: ${Number(av.notaFinal).toFixed(1)} / 50.0 <<<\n`;
+                    txt += `Parecer: ${av.parecer}\n`;
+                    txt += "--------------------------------------------------------\n\n";
                 });
-                txt += `\n>>> TOTAL DA AVALIAÇÃO: ${av.notaFinal} / 50.0 <<<\n`;
-                txt += `Parecer: ${av.parecer}\n`;
-                txt += "--------------------------------------------------------\n\n";
-            });
 
-            const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `relatorio_geral_hackathon_${new Date().toISOString().slice(0,10)}.txt`;
-            link.click();
+                const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `relatorio_geral_hackathon_${new Date().toISOString().slice(0,10)}.txt`;
+                link.click();
+            } catch (erro) {
+                alert("Erro ao gerar relatório: " + erro.message);
+            }
         }
 
         // Limpar Base
         async function limparTodasAvaliacoes() {
-            const senha = prompt("Introduza a senha de administrador para APAGAR todas as avaliações:");
+            const senha = prompt("Introduza a senha de administrador para APAGAR todas as avaliações da base:");
             if (!senha) return;
 
             if (!(await verificarSenha(senha))) {
@@ -390,10 +485,14 @@
                 return;
             }
 
-            if (confirm("ATENÇÃO: Deseja apagar permanentemente todas as avaliações salvas?")) {
-                localStorage.removeItem('hackathon_avaliacoes');
-                atualizarDashboard();
-                alert("Base limpa com sucesso!");
+            if (confirm("ATENÇÃO: Deseja apagar permanentemente todas as avaliações registradas na base de dados?")) {
+                try {
+                    await DB.limparTudo();
+                    await atualizarDashboard();
+                    alert("Base de dados limpa com sucesso!");
+                } catch (erro) {
+                    alert("Erro ao limpar base: " + erro.message);
+                }
             }
         }
     </script>
