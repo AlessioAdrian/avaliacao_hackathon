@@ -49,8 +49,8 @@
         @media (max-width: 600px) { .grid-info { grid-template-columns: 1fr; } }
 
         label { display: block; margin-top: 10px; font-weight: 600; font-size: 0.85rem; color: #cbd5e1; }
-        input[type="text"], textarea { width: 100%; padding: 10px; margin-top: 5px; background: #0f172a; border: 1px solid var(--border); border-radius: 6px; color: #fff; box-sizing: border-box; font-size: 0.9rem; outline: none; font-family: inherit; }
-        input[type="text"]:focus, textarea:focus { border-color: var(--primary); }
+        input[type="text"], select, textarea { width: 100%; padding: 10px; margin-top: 5px; background: #0f172a; border: 1px solid var(--border); border-radius: 6px; color: #fff; box-sizing: border-box; font-size: 0.9rem; outline: none; font-family: inherit; }
+        input[type="text"]:focus, select:focus, textarea:focus { border-color: var(--primary); }
 
         /* Critérios */
         .criterio-card { background: #0f172a; border: 1px solid var(--border); border-radius: 8px; padding: 12px 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; gap: 15px; }
@@ -126,13 +126,22 @@
                         <input type="text" id="avaliador" required placeholder="Seu nome completo">
                     </div>
                     <div>
-                        <label for="equipe">Nome da Equipe / Projeto:</label>
-                        <input type="text" id="equipe" required placeholder="Ex: EcoOsasco">
+                        <label for="equipe">Selecione a Equipe:</label>
+                        <select id="equipe" required>
+                            <option value="">Escolha o grupo...</option>
+                            <option value="AI Innovators">AI Innovators</option>
+                            <option value="DEV Squad">DEV Squad</option>
+                            <option value="Code Panther">Code Panther</option>
+                            <option value="CODE Spartans">CODE Spartans</option>
+                            <option value="DEV Master">DEV Master</option>
+                            <option value="Tech Titans">Tech Titans</option>
+                            <option value="Dragon CODE">Dragon CODE</option>
+                        </select>
                     </div>
                 </div>
 
-                <label for="integrantes" style="margin-bottom: 15px;">Integrantes (Opcional):</label>
-                <input type="text" id="integrantes" placeholder="Nomes ou RAs dos alunos" style="margin-bottom: 20px;">
+                <label for="integrantes" style="margin-bottom: 15px;">Nome do Projeto / Observação da Equipe (Opcional):</label>
+                <input type="text" id="integrantes" placeholder="Ex: Sistema de Gestão Comunitária" style="margin-bottom: 20px;">
 
                 <h3 style="color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-bottom: 15px; font-size: 1rem;">Critérios de Avaliação (0,0 a 5,0 cada)</h3>
 
@@ -163,7 +172,7 @@
                     <thead>
                         <tr>
                             <th>Pos</th>
-                            <th>Equipe / Projeto</th>
+                            <th>Equipe</th>
                             <th>Banca (Avaliadores)</th>
                             <th>Média Final</th>
                         </tr>
@@ -181,11 +190,9 @@
     </div>
 
     <script>
-        
         // =========================================================================
         // CONFIGURAÇÃO DO BANCO DE DADOS (FIREBASE REALTIME DATABASE)
         // Cole abaixo a URL do seu Firebase (ex: "https://seu-projeto-default-rtdb.firebaseio.com")
-        // Deixe vazio "" para operar em modo local de teste.
         // =========================================================================
         const FIREBASE_DB_URL = "https://hackathon-anhanguera-osasco-default-rtdb.firebaseio.com/"; 
 
@@ -204,7 +211,6 @@
             { id: 10, titulo: "10. Tratamento de Erros e Robustez", desc: "Validação de entradas inválidas, estabilidade e mensagens amigáveis." }
         ];
 
-        // Verifica status da conexão
         const usandoNuvem = FIREBASE_DB_URL.trim().startsWith("http");
         const statusBadge = document.getElementById('statusBadge');
         if (usandoNuvem) {
@@ -215,7 +221,6 @@
             statusBadge.className = "badge badge-local";
         }
 
-        // Camada de Abstração do Banco de Dados (Firebase REST API + Fallback Local)
         const DB = {
             async listar() {
                 if (usandoNuvem) {
@@ -256,7 +261,6 @@
             }
         };
 
-        // Renderizar Critérios (0 a 5)
         const containerCriterios = document.getElementById('listaCriterios');
         criterios.forEach(c => {
             containerCriterios.innerHTML += `
@@ -301,7 +305,6 @@
             }
         }
 
-        // Submeter Avaliação
         document.getElementById('formAvaliacao').addEventListener('submit', async function(e) {
             e.preventDefault();
             const btn = document.getElementById('btnSalvar');
@@ -318,7 +321,7 @@
                 const novaAvaliacao = {
                     data: new Date().toLocaleString('pt-BR'),
                     avaliador: document.getElementById('avaliador').value.trim(),
-                    equipe: document.getElementById('equipe').value.trim(),
+                    equipe: document.getElementById('equipe').value,
                     integrantes: document.getElementById('integrantes').value.trim() || "Não informado",
                     notas: notasDetalhadas,
                     notaFinal: notaFinal,
@@ -341,7 +344,6 @@
             }
         });
 
-        // Atualizar Dashboard e Ranking a partir do Banco de Dados
         async function atualizarDashboard() {
             const tbody = document.getElementById('rankingTabelaBody');
             tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #94a3b8;">Carregando dados da base...</td></tr>`;
@@ -351,20 +353,19 @@
                 
                 let equipesMap = {};
                 avaliacoes.forEach(av => {
-                    let nomeEquipeOriginal = av.equipe;
-                    let chave = nomeEquipeOriginal.toUpperCase().trim();
-                    if (!equipesMap[chave]) {
-                        equipesMap[chave] = { 
-                            nome: nomeEquipeOriginal, 
+                    let nomeEquipe = av.equipe;
+                    if (!equipesMap[nomeEquipe]) {
+                        equipesMap[nomeEquipe] = { 
+                            nome: nomeEquipe, 
                             totalNotas: 0, 
                             qtd: 0,
                             avaliadores: []
                         };
                     }
-                    equipesMap[chave].totalNotas += Number(av.notaFinal);
-                    equipesMap[chave].qtd += 1;
-                    if (!equipesMap[chave].avaliadores.includes(av.avaliador)) {
-                        equipesMap[chave].avaliadores.push(av.avaliador);
+                    equipesMap[nomeEquipe].totalNotas += Number(av.notaFinal);
+                    equipesMap[nomeEquipe].qtd += 1;
+                    if (!equipesMap[nomeEquipe].avaliadores.includes(av.avaliador)) {
+                        equipesMap[nomeEquipe].avaliadores.push(av.avaliador);
                     }
                 });
 
@@ -375,7 +376,6 @@
                     avaliadores: eq.avaliadores.join(', ')
                 })).sort((a, b) => b.media - a.media);
 
-                // Pódio
                 let podiumHTML = '';
                 const medalhas = ['🥇', '🥈', '🥉'];
                 const classesCard = ['gold', 'silver', 'bronze'];
@@ -401,7 +401,6 @@
                 }
                 document.getElementById('podiumContainer').innerHTML = podiumHTML;
 
-                // Tabela
                 if (ranking.length === 0) {
                     tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #94a3b8;">Nenhuma avaliação encontrada na base de dados.</td></tr>`;
                 } else {
@@ -427,7 +426,6 @@
             return hashArray.map(b => b.toString(16).padStart(2, '0')).join('') === SENHA_HASH_CORRETA;
         }
 
-        // Exportar Relatório Geral da Base
         async function exportarRelatorioGeral() {
             const senha = prompt("Introduza a senha de administrador para exportar o relatório:");
             if (!senha) return;
@@ -454,8 +452,8 @@
                     txt += `--- AVALIAÇÃO #${index + 1} ---\n`;
                     txt += `Data/Hora: ${av.data}\n`;
                     txt += `Avaliador(a): ${av.avaliador}\n`;
-                    txt += `Equipe/Projeto: ${av.equipe}\n`;
-                    txt += `Integrantes: ${av.integrantes}\n\n`;
+                    txt += `Equipe: ${av.equipe}\n`;
+                    txt += `Projeto/Obs: ${av.integrantes}\n\n`;
                     txt += `NOTAS (0 a 5):\n`;
                     av.notas.forEach(n => {
                         txt += `  • ${n.criterio}: ${n.nota}\n`;
@@ -475,7 +473,6 @@
             }
         }
 
-        // Limpar Base
         async function limparTodasAvaliacoes() {
             const senha = prompt("Introduza a senha de administrador para APAGAR todas as avaliações da base:");
             if (!senha) return;
