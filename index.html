@@ -1,401 +1,639 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Avaliação e Ranking — Hackathon TI Anhanguera Osasco</title>
-    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkF2YWxpYcOnw6NvIEhhY2thdGhvbiBUSSIsCiAgInNob3J0X25hbWUiOiAiQXZhbGlhSGFjayIsCiAgInN0YXJ0X3VybCI6ICIuIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMGYxNzJhIiwKICAidGhlbWVfY29sb3IiOiAiI2Y5NzMxNiIKfQ==">
-    <style>
-        :root { --primary: #f97316; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --border: #334155; }
-        body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
-        .container { max-width: 800px; margin: 0 auto; background: var(--card); padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border-top: 5px solid var(--primary); }
-        
-        /* Efeito Especial na Logomarca */
-        .logo-container { 
-            text-align: center; 
-            margin-bottom: 20px; 
-            padding: 15px; 
-            border-radius: 12px; 
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            border: 2px solid var(--primary);
-            position: relative;
-            animation: pulse-glow 2s infinite alternate;
-        }
-        @keyframes pulse-glow {
-            0% { box-shadow: 0 0 10px rgba(249, 115, 22, 0.2), inset 0 0 5px rgba(249, 115, 22, 0.1); }
-            100% { box-shadow: 0 0 25px rgba(249, 115, 22, 0.6), inset 0 0 12px rgba(249, 115, 22, 0.25); }
-        }
-        .logo-container img { max-width: 220px; height: auto; position: relative; z-index: 2; }
-        
-        h1 { font-size: 1.4rem; margin-bottom: 5px; color: #fff; text-align: center; }
-        p.subtitle { text-align: center; color: #94a3b8; font-size: 0.85rem; margin-bottom: 20px; }
-
-        /* Navegação por Abas */
-        .nav-tabs { display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
-        .tab-btn { flex: 1; padding: 12px; font-weight: bold; background: #0f172a; border: 1px solid var(--border); color: #94a3b8; border-radius: 6px; cursor: pointer; transition: 0.3s; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; }
-        .tab-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3); }
-        
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-
-        /* Formulário */
-        .grid-info { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-        @media (max-width: 600px) { .grid-info { grid-template-columns: 1fr; } }
-
-        label { display: block; margin-top: 10px; font-weight: 600; font-size: 0.85rem; color: #cbd5e1; }
-        input[type="text"], textarea { width: 100%; padding: 10px; margin-top: 5px; background: #0f172a; border: 1px solid var(--border); border-radius: 6px; color: #fff; box-sizing: border-box; font-size: 0.9rem; outline: none; font-family: inherit; }
-        input[type="text"]:focus, textarea:focus { border-color: var(--primary); }
-
-        /* Critérios */
-        .criterio-card { background: #0f172a; border: 1px solid var(--border); border-radius: 8px; padding: 12px 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; gap: 15px; }
-        .criterio-info h4 { margin: 0 0 3px 0; color: #fff; font-size: 0.92rem; }
-        .criterio-info p { margin: 0; color: #94a3b8; font-size: 0.8rem; line-height: 1.3; }
-        
-        .nota-box { display: flex; flex-direction: column; align-items: center; min-width: 75px; }
-        .nota-box span { font-size: 0.7rem; color: #94a3b8; margin-bottom: 3px; }
-        input[type="number"] { width: 70px; padding: 8px; background: var(--card); border: 2px solid var(--primary); border-radius: 6px; color: #fff; font-size: 1rem; font-weight: bold; text-align: center; outline: none; }
-        
-        /* Placar Total */
-        .placar-total { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); color: #fff; padding: 15px 20px; border-radius: 8px; margin: 20px 0; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3); }
-        .placar-total span.label-total { font-weight: bold; font-size: 1rem; text-transform: uppercase; }
-        .placar-total span.valor-total { font-size: 1.6rem; font-weight: 800; }
-
-        /* Botões */
-        button.action-btn { width: 100%; color: #fff; border: none; padding: 12px; font-weight: bold; border-radius: 6px; margin-top: 12px; cursor: pointer; transition: 0.3s; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px; }
-        .btn-submit { background: var(--primary); }
-        .btn-submit:hover { background: #ea580c; }
-        .btn-export { background: #10b981; }
-        .btn-export:hover { background: #059669; }
-        .btn-clear { background: #ef4444; }
-        .btn-clear:hover { background: #dc2626; }
-
-        /* Dashboard & Ranking */
-        .podium-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
-        .podium-card { background: #0f172a; border: 1px solid var(--border); border-radius: 8px; padding: 15px; text-align: center; position: relative; }
-        .podium-card.gold { border-color: #f59e0b; background: linear-gradient(180deg, #1e293b 0%, #292524 100%); }
-        .podium-card.silver { border-color: #94a3b8; }
-        .podium-card.bronze { border-color: #b45309; }
-        .podium-medal { font-size: 1.5rem; margin-bottom: 5px; }
-        .podium-team { font-weight: bold; font-size: 0.95rem; color: #fff; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .podium-score { font-size: 1.2rem; font-weight: 800; color: var(--primary); }
-
-        .ranking-table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #0f172a; border-radius: 8px; overflow: hidden; }
-        .ranking-table th, .ranking-table td { padding: 12px 15px; text-align: left; font-size: 0.9rem; border-bottom: 1px solid var(--border); }
-        .ranking-table th { background: #162032; color: #94a3b8; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; }
-        .ranking-table tr:last-child td { border-bottom: none; }
-        .ranking-table tr:hover { background: #162032; }
-
-        .admin-section { margin-top: 30px; padding-top: 20px; border-top: 1px dashed var(--border); }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Avaliação de Projetos de TI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    .star-rating input[type="radio"] { display: none; }
+    .star-rating label { cursor: pointer; transition: all 0.2s; }
+    .star-rating input[type="radio"]:checked + label {
+      background-color: #2563eb;
+      color: white;
+      border-color: #2563eb;
+    }
+  </style>
 </head>
-<body>
-    <div class="container">
-        <div class="logo-container">
-            <img src="logo.JPG" alt="Logo Anhanguera Osasco">
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans">
+
+  <!-- Header -->
+  <header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div class="flex items-center gap-3">
+        <div class="p-2 bg-blue-600 rounded-lg">
+          <i data-lucide="award" class="w-6 h-6 text-white"></i>
         </div>
-        
-        <h1>HACKATHON DE TI 2026/2</h1>
-        <p class="subtitle">Faculdade Anhanguera Osasco • Sistema Integrado da Banca</p>
-        
-        <!-- Navegação -->
-        <div class="nav-tabs">
-            <button class="tab-btn active" onclick="mudarAba('avaliacao')">📝 Ficha de Avaliação</button>
-            <button class="tab-btn" onclick="mudarAba('dashboard')">🏆 Dashboard & Ranking</button>
+        <div>
+          <h1 class="text-xl font-bold text-white">Avaliação de Projetos de TI</h1>
+          <p class="text-xs text-slate-400">Base de Dados em Nuvem (Sincronizada)</p>
         </div>
-
-        <!-- ABA 1: FICHA DE AVALIAÇÃO -->
-        <div id="aba-avaliacao" class="tab-content active">
-            <form id="formAvaliacao">
-                <div class="grid-info">
-                    <div>
-                        <label for="avaliador">Professor(a) Avaliador(a):</label>
-                        <input type="text" id="avaliador" required placeholder="Seu nome completo">
-                    </div>
-                    <div>
-                        <label for="equipe">Nome da Equipe / Projeto:</label>
-                        <input type="text" id="equipe" required placeholder="Ex: EcoOsasco">
-                    </div>
-                </div>
-
-                <label for="integrantes" style="margin-bottom: 15px;">Integrantes (Opcional):</label>
-                <input type="text" id="integrantes" placeholder="Nomes ou RAs dos alunos" style="margin-bottom: 20px;">
-
-                <h3 style="color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-bottom: 15px; font-size: 1rem;">Critérios de Avaliação (0,0 a 5,0 cada)</h3>
-
-                <div id="listaCriterios"></div>
-
-                <div class="placar-total">
-                    <span class="label-total">Nota Final da Equipe:</span>
-                    <span class="valor-total" id="notaTotalDisplay">0.0 / 50.0</span>
-                </div>
-
-                <label for="parecer">Parecer / Feedback da Banca:</label>
-                <textarea id="parecer" rows="2" placeholder="Pontos fortes, sugestões ou observações..."></textarea>
-
-                <button type="submit" class="action-btn btn-submit">Registrar Avaliação</button>
-            </form>
-        </div>
-
-        <!-- ABA 2: DASHBOARD & RANKING -->
-        <div id="aba-dashboard" class="tab-content">
-            <h3 style="color: #fff; margin-top: 0; font-size: 1.1rem; margin-bottom: 15px;">Pódio Geral</h3>
-            <div id="podiumContainer" class="podium-grid">
-                <!-- Preenchido via JS -->
-            </div>
-
-            <h3 style="color: #fff; margin-top: 25px; font-size: 1.1rem; margin-bottom: 10px;">Classificação Completa</h3>
-            <div style="overflow-x: auto;">
-                <table class="ranking-table">
-                    <thead>
-                        <tr>
-                            <th>Pos</th>
-                            <th>Equipe / Projeto</th>
-                            <th>Avaliações</th>
-                            <th>Média Final</th>
-                        </tr>
-                    </thead>
-                    <tbody id="rankingTabelaBody">
-                        <!-- Preenchido via JS -->
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="admin-section">
-                <h3 style="margin: 0; color: #94a3b8; font-size: 0.95rem; margin-bottom: 10px;">Controle Administrativo</h3>
-                <button type="button" class="action-btn btn-export" onclick="exportarRelatorioGeral()">Descarregar Relatório Geral (.TXT)</button>
-                <button type="button" class="action-btn btn-clear" onclick="limparTodasAvaliacoes()">Limpar Todas as Avaliações</button>
-            </div>
-        </div>
+      </div>
+      <!-- Navegação -->
+      <nav class="flex bg-slate-900 p-1 rounded-xl border border-slate-700">
+        <button onclick="switchTab('form')" id="tab-form" class="px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 bg-blue-600 text-white">
+          <i data-lucide="clipboard-edit" class="w-4 h-4"></i> Avaliação
+        </button>
+        <button onclick="switchTab('dashboard')" id="tab-dashboard" class="px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-slate-400 hover:text-white">
+          <i data-lucide="bar-chart-3" class="w-4 h-4"></i> Dashboard
+        </button>
+        <button onclick="switchTab('reports')" id="tab-reports" class="px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-slate-400 hover:text-white">
+          <i data-lucide="file-text" class="w-4 h-4"></i> Relatórios
+        </button>
+        <button onclick="openAdminModal()" id="tab-admin" class="px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-amber-400 hover:text-amber-300">
+          <i data-lucide="lock" class="w-4 h-4"></i> Admin
+        </button>
+      </nav>
     </div>
+  </header>
 
-    <script>
-        const SENHA_HASH_CORRETA = "9576141106e1a2d2e67f8fc384336472cdad8ba9356e907cdd5329c13653f9d8";
+  <!-- Conteúdo Principal -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-6">
 
-        const criterios = [
-            { id: 1, titulo: "1. Relevância e Impacto Prático", desc: "Resolve um problema real com impacto claro para os usuários ou comunidade." },
-            { id: 2, titulo: "2. Funcionalidade e Aplicabilidade (MVP)", desc: "Protótipo funcional na prática com as principais entregas testáveis." },
-            { id: 3, titulo: "3. Aplicação da Metodologia (Ciclo PDCA)", desc: "Documentação estruturada seguindo Plan, Do, Check e Act de forma coerente." },
-            { id: 4, titulo: "4. Inovação e Criatividade Tecnológica", desc: "Diferencial criativo, uso de boas tecnologias ou abordagem inovadora." },
-            { id: 5, titulo: "5. Interface e Experiência do Usuário (UI/UX)", desc: "Navegação intuitiva, agradável e pensada para facilitar o uso." },
-            { id: 6, titulo: "6. Arquitetura, Código e Organização", desc: "Código limpo, bem estruturado e com boas práticas de desenvolvimento." },
-            { id: 7, titulo: "7. Viabilidade e Sustentabilidade", desc: "Potencial real de implementação e continuidade sem barreiras excessivas." },
-            { id: 8, titulo: "8. Clareza e Qualidade do Pitch", desc: "Comunicação objetiva, clara e convincente durante a apresentação." },
-            { id: 9, titulo: "9. Trabalho em Equipe e Sinergia", desc: "Integração entre os membros (ADS, SI, GTI) e divisão equilibrada de tarefas." },
-            { id: 10, titulo: "10. Tratamento de Erros e Robustez", desc: "Validação de entradas inválidas, estabilidade e mensagens amigáveis." }
+    <!-- ABA 1: FORMULÁRIO -->
+    <section id="view-form" class="space-y-6">
+      <form id="evaluation-form" onsubmit="handleFormSubmit(event)" class="space-y-6">
+
+        <!-- Identificação -->
+        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl">
+          <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <i data-lucide="user-check" class="text-blue-400"></i> Identificação do Avaliador
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-slate-300 mb-1">Nome do Avaliador / Estudante *</label>
+              <input type="text" id="eval-name" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Digite seu nome completo" required>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-300 mb-1">Grupo de TI Avaliado *</label>
+              <select id="eval-group" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-blue-500 outline-none" required>
+                <option value="">Selecione a equipe avaliada</option>
+                <option value="1 - Code Pather">1 - Code Pather</option>
+                <option value="2 - Phoenix Dev">2 - Phoenix Dev</option>
+                <option value="3 - AI Innovators">3 - AI Innovators</option>
+                <option value="4 - Code Spartans">4 - Code Spartans</option>
+                <option value="5 - DEV Masters">5 - DEV Masters</option>
+                <option value="6 - Tech TItans">6 - Tech TItans</option>
+                <option value="7 - Dragon Code">7 - Dragon Code</option>
+                <option value="8 - Dev Squad">8 - Dev Squad</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Bloco 1 -->
+        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
+          <h3 class="text-md font-bold text-blue-400 mb-4 flex items-center gap-2">
+            <span>1.</span> Perfil e Fit Cultural da Equipe
+          </h3>
+          <div class="space-y-4">
+            <div>
+              <p class="text-sm text-slate-200 mb-2">Clareza, transparência e dinamismo na apresentação da proposta:</p>
+              <div class="star-rating flex gap-2">
+                <script>
+                  for(let i=1; i<=5; i++) {
+                    document.write(`
+                      <input type="radio" id="b1_q1_${i}" name="b1_q1" value="${i}" required>
+                      <label for="b1_q1_${i}" class="w-10 h-10 border border-slate-600 rounded-lg flex items-center justify-center font-bold text-slate-300 hover:border-blue-500">${i}</label>
+                    `);
+                  }
+                </script>
+              </div>
+            </div>
+            <div>
+              <p class="text-sm text-slate-200 mb-2">Postura profissional e alinhamento com ética e responsabilidade:</p>
+              <div class="star-rating flex gap-2">
+                <script>
+                  for(let i=1; i<=5; i++) {
+                    document.write(`
+                      <input type="radio" id="b1_q2_${i}" name="b1_q2" value="${i}" required>
+                      <label for="b1_q2_${i}" class="w-10 h-10 border border-slate-600 rounded-lg flex items-center justify-center font-bold text-slate-300 hover:border-blue-500">${i}</label>
+                    `);
+                  }
+                </script>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bloco 2 -->
+        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
+          <h3 class="text-md font-bold text-blue-400 mb-4 flex items-center gap-2">
+            <span>2.</span> Competências Comportamentais (Soft Skills)
+          </h3>
+          <div class="space-y-4">
+            <div>
+              <p class="text-sm text-slate-200 mb-2">Articulação, coesão do grupo e divisão clara de papéis:</p>
+              <div class="star-rating flex gap-2">
+                <script>
+                  for(let i=1; i<=5; i++) {
+                    document.write(`
+                      <input type="radio" id="b2_q1_${i}" name="b2_q1" value="${i}" required>
+                      <label for="b2_q1_${i}" class="w-10 h-10 border border-slate-600 rounded-lg flex items-center justify-center font-bold text-slate-300 hover:border-blue-500">${i}</label>
+                    `);
+                  }
+                </script>
+              </div>
+            </div>
+            <div>
+              <p class="text-sm text-slate-200 mb-2">Flexibilidade e inteligência emocional ao responder dúvidas:</p>
+              <div class="star-rating flex gap-2">
+                <script>
+                  for(let i=1; i<=5; i++) {
+                    document.write(`
+                      <input type="radio" id="b2_q2_${i}" name="b2_q2" value="${i}" required>
+                      <label for="b2_q2_${i}" class="w-10 h-10 border border-slate-600 rounded-lg flex items-center justify-center font-bold text-slate-300 hover:border-blue-500">${i}</label>
+                    `);
+                  }
+                </script>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bloco 3 -->
+        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
+          <h3 class="text-md font-bold text-blue-400 mb-4 flex items-center gap-2">
+            <span>3.</span> Solução Técnica e Inovação (Hard Skills)
+          </h3>
+          <div class="space-y-4">
+            <div>
+              <p class="text-sm text-slate-200 mb-2">Eficiência e simplicidade no aplicativo para o agendamento da coordenação:</p>
+              <div class="star-rating flex gap-2">
+                <script>
+                  for(let i=1; i<=5; i++) {
+                    document.write(`
+                      <input type="radio" id="b3_q1_${i}" name="b3_q1" value="${i}" required>
+                      <label for="b3_q1_${i}" class="w-10 h-10 border border-slate-600 rounded-lg flex items-center justify-center font-bold text-slate-300 hover:border-blue-500">${i}</label>
+                    `);
+                  }
+                </script>
+              </div>
+            </div>
+            <div>
+              <p class="text-sm text-slate-200 mb-2">Domínio técnico e clareza na explicação da solução:</p>
+              <div class="star-rating flex gap-2">
+                <script>
+                  for(let i=1; i<=5; i++) {
+                    document.write(`
+                      <input type="radio" id="b3_q2_${i}" name="b3_q2" value="${i}" required>
+                      <label for="b3_q2_${i}" class="w-10 h-10 border border-slate-600 rounded-lg flex items-center justify-center font-bold text-slate-300 hover:border-blue-500">${i}</label>
+                    `);
+                  }
+                </script>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bloco 4 -->
+        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
+          <h3 class="text-md font-bold text-blue-400 mb-4 flex items-center gap-2">
+            <span>4.</span> Organização e Visão de Negócio
+          </h3>
+          <div class="space-y-4">
+            <div>
+              <p class="text-sm text-slate-200 mb-2">Planejamento, organização e gestão do tempo:</p>
+              <div class="star-rating flex gap-2">
+                <script>
+                  for(let i=1; i<=5; i++) {
+                    document.write(`
+                      <input type="radio" id="b4_q1_${i}" name="b4_q1" value="${i}" required>
+                      <label for="b4_q1_${i}" class="w-10 h-10 border border-slate-600 rounded-lg flex items-center justify-center font-bold text-slate-300 hover:border-blue-500">${i}</label>
+                    `);
+                  }
+                </script>
+              </div>
+            </div>
+            <div>
+              <p class="text-sm text-slate-200 mb-2">Viabilidade técnica e potencial de uso do produto no mundo real:</p>
+              <div class="star-rating flex gap-2">
+                <script>
+                  for(let i=1; i<=5; i++) {
+                    document.write(`
+                      <input type="radio" id="b4_q2_${i}" name="b4_q2" value="${i}" required>
+                      <label for="b4_q2_${i}" class="w-10 h-10 border border-slate-600 rounded-lg flex items-center justify-center font-bold text-slate-300 hover:border-blue-500">${i}</label>
+                    `);
+                  }
+                </script>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bloco 5 -->
+        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
+          <h3 class="text-md font-bold text-blue-400 mb-4 flex items-center gap-2">
+            <span>5.</span> Decisão de Contratação e Parecer Final
+          </h3>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-slate-300 mb-2">Decisão sobre a Contratação da Equipe *</label>
+              <select id="hire-decision" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-blue-500 outline-none" required>
+                <option value="">Selecione uma opção</option>
+                <option value="Contratação Imediata">Contratação Imediata (Projeto Completo)</option>
+                <option value="Contratação Parcial/Spot">Contratação para Demandas Pontuais</option>
+                <option value="Aguardar Próxima Rodada">Aguardar Próxima Avaliação / Ajustes</option>
+                <option value="Não Contrataria">Não Contrataria neste Momento</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-300 mb-2">Justificativa e Parecer Final *</label>
+              <textarea id="eval-comments" rows="3" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Apresente a justificativa técnica/comportamental para a decisão tomada..." required></textarea>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" id="submit-btn" class="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg transition flex items-center justify-center gap-2 text-lg">
+          <i data-lucide="send"></i> Enviar Avaliação para Nuvem
+        </button>
+      </form>
+    </section>
+
+    <!-- ABA 2: DASHBOARD -->
+    <section id="view-dashboard" class="hidden space-y-6">
+      <div class="flex justify-between items-center bg-slate-800 p-4 rounded-xl border border-slate-700">
+        <span id="sync-status" class="text-sm text-slate-300 flex items-center gap-2">
+          <i data-lucide="cloud" class="w-4 h-4 text-blue-400"></i> Dados sincronizados com a planilha
+        </span>
+        <button onclick="fetchCloudData(true)" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-lg flex items-center gap-1 transition">
+          <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Atualizar Dados
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl">
+          <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2"><i data-lucide="bar-chart-3" class="text-blue-400"></i> Pontuação Média por Grupo</h3>
+          <canvas id="chart-scores" class="w-full max-h-80"></canvas>
+        </div>
+        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl">
+          <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2"><i data-lucide="pie-chart" class="text-emerald-400"></i> Decisões de Contratação</h3>
+          <canvas id="chart-hiring" class="w-full max-h-80"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABA 3: RELATÓRIOS -->
+    <section id="view-reports" class="hidden space-y-6">
+      <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-lg font-bold text-white flex items-center gap-2"><i data-lucide="file-text" class="text-blue-400"></i> Resumo Consolidado por Grupo</h2>
+          <button onclick="fetchCloudData(true)" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white text-xs rounded-lg flex items-center gap-1 transition">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Atualizar Lista
+          </button>
+        </div>
+        <div id="reports-container" class="space-y-4">
+          <p class="text-slate-400">Carregando avaliações da nuvem...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABA 4: ADMIN / EXPORTAR -->
+    <section id="view-admin" class="hidden space-y-6">
+      <div class="bg-slate-800 p-6 rounded-2xl border border-amber-500/30 shadow-xl space-y-6">
+        <div class="flex justify-between items-center border-b border-slate-700 pb-4">
+          <div>
+            <h2 class="text-xl font-bold text-amber-400 flex items-center gap-2">
+              <i data-lucide="shield-check"></i> Painel do Professor / Administrador
+            </h2>
+            <p class="text-xs text-slate-400 mt-1">Os dados agora ficam salvos permanentemente na sua Planilha Google.</p>
+          </div>
+          <button onclick="logoutAdmin()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-xs rounded-lg text-slate-300 transition">
+            Sair do Admin
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-slate-900 p-5 rounded-xl border border-slate-700 flex flex-col justify-between">
+            <div>
+              <h3 class="font-bold text-white mb-1 flex items-center gap-2"><i data-lucide="file-spreadsheet" class="text-emerald-400"></i> Exportar Dados para Excel (CSV)</h3>
+              <p class="text-xs text-slate-400 mb-4">Baixe uma cópia offline de todas as respostas registradas na nuvem.</p>
+            </div>
+            <button onclick="exportToExcel()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-sm transition flex items-center justify-center gap-2">
+              <i data-lucide="download"></i> Baixar Relatório em Excel
+            </button>
+          </div>
+
+          <div class="bg-slate-900 p-5 rounded-xl border border-slate-700 flex flex-col justify-between">
+            <div>
+              <h3 class="font-bold text-white mb-1 flex items-center gap-2"><i data-lucide="trash-2" class="text-rose-400"></i> Limpar Banco de Dados</h3>
+              <p class="text-xs text-slate-400 mb-4">Apaga todas as linhas registradas na planilha em nuvem (exceto cabeçalhos).</p>
+            </div>
+            <button onclick="clearAllData()" class="w-full py-2.5 bg-rose-600/20 hover:bg-rose-600 text-rose-300 hover:text-white border border-rose-500/50 font-bold rounded-lg text-sm transition flex items-center justify-center gap-2">
+              <i data-lucide="alert-triangle"></i> Zerar Planilha em Nuvem
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modal de Login do Admin -->
+  <div id="admin-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-800 border border-slate-700 w-full max-w-md p-6 rounded-2xl shadow-2xl space-y-4">
+      <div class="flex items-center gap-3">
+        <div class="p-2 bg-amber-500/20 text-amber-400 rounded-lg">
+          <i data-lucide="lock" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold text-white">Acesso do Professor</h3>
+          <p class="text-xs text-slate-400">Digite a senha administrativa</p>
+        </div>
+      </div>
+      <div>
+        <input type="password" id="admin-password" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-amber-500 outline-none" placeholder="Senha do Admin">
+        <p id="admin-error" class="text-xs text-rose-400 mt-1 hidden">Senha incorreta. Tente novamente.</p>
+      </div>
+      <div class="flex gap-2 justify-end">
+        <button onclick="closeAdminModal()" class="px-4 py-2 bg-slate-700 text-slate-300 rounded-lg text-sm hover:bg-slate-600 transition">Cancelar</button>
+        <button onclick="verifyAdminPassword()" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-lg text-sm transition">Entrar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    // =========================================================================
+    // COLE ABAIXO A URL DO SEU GOOGLE APPS SCRIPT GERADA NO PASSO 1:
+    const API_URL = "COLE_SUA_URL_DO_GOOGLE_APPS_SCRIPT_AQUI";
+    // =========================================================================
+
+    const ADMIN_PASSWORD = "admin123";
+    const GROUPS_LIST = [
+      "1 - Code Pather",
+      "2 - Phoenix Dev",
+      "3 - AI Innovators",
+      "4 - Code Spartans",
+      "5 - DEV Masters",
+      "6 - Tech TItans",
+      "7 - Dragon Code",
+      "8 - Dev Squad"
+    ];
+
+    let isAdminAuthenticated = false;
+    let storageData = [];
+
+    // Busca dados da nuvem ao abrir
+    async function fetchCloudData(showAlert = false) {
+      if (API_URL.includes("COLE_SUA_URL")) {
+        console.warn("URL da API do Google Sheets ainda não configurada.");
+        return;
+      }
+
+      const statusEl = document.getElementById('sync-status');
+      if (statusEl) statusEl.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin text-amber-400"></i> Buscando dados na nuvem...`;
+      lucide.createIcons();
+
+      try {
+        const response = await fetch(API_URL);
+        storageData = await response.json();
+        
+        if (statusEl) statusEl.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i> ${storageData.length} avaliações sincronizadas`;
+        lucide.createIcons();
+
+        renderCharts();
+        renderReports();
+        if (showAlert) alert("Dados atualizados com sucesso!");
+      } catch (error) {
+        console.error("Erro ao carregar dados:", error);
+        if (statusEl) statusEl.innerHTML = `<i data-lucide="alert-circle" class="w-4 h-4 text-rose-400"></i> Erro ao conectar com a planilha`;
+        lucide.createIcons();
+      }
+    }
+
+    // Carrega inicialmente
+    fetchCloudData();
+
+    function switchTab(tab) {
+      document.getElementById('view-form').classList.add('hidden');
+      document.getElementById('view-dashboard').classList.add('hidden');
+      document.getElementById('view-reports').classList.add('hidden');
+      document.getElementById('view-admin').classList.add('hidden');
+
+      document.getElementById('tab-form').className = "px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-slate-400 hover:text-white";
+      document.getElementById('tab-dashboard').className = "px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-slate-400 hover:text-white";
+      document.getElementById('tab-reports').className = "px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-slate-400 hover:text-white";
+      document.getElementById('tab-admin').className = "px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-amber-400 hover:text-amber-300";
+
+      document.getElementById(`view-${tab}`).classList.remove('hidden');
+      if(tab !== 'admin') {
+        document.getElementById(`tab-${tab}`).className = "px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 bg-blue-600 text-white";
+      }
+
+      if(tab === 'dashboard' || tab === 'reports') {
+        fetchCloudData();
+      }
+    }
+
+    function openAdminModal() {
+      if(isAdminAuthenticated) {
+        switchTab('admin');
+      } else {
+        document.getElementById('admin-password').value = '';
+        document.getElementById('admin-error').classList.add('hidden');
+        document.getElementById('admin-modal').classList.remove('hidden');
+      }
+    }
+
+    function closeAdminModal() {
+      document.getElementById('admin-modal').classList.add('hidden');
+    }
+
+    function verifyAdminPassword() {
+      const pass = document.getElementById('admin-password').value;
+      if(pass === ADMIN_PASSWORD) {
+        isAdminAuthenticated = true;
+        closeAdminModal();
+        switchTab('admin');
+      } else {
+        document.getElementById('admin-error').classList.remove('hidden');
+      }
+    }
+
+    function logoutAdmin() {
+      isAdminAuthenticated = false;
+      switchTab('form');
+    }
+
+    async function handleFormSubmit(e) {
+      e.preventDefault();
+
+      if (API_URL.includes("COLE_SUA_URL")) {
+        alert("Atenção Professor: Configure a URL do Google Apps Script no código HTML antes de iniciar.");
+        return;
+      }
+
+      const evalName = document.getElementById('eval-name').value;
+      const group = document.getElementById('eval-group').value;
+      const submitBtn = document.getElementById('submit-btn');
+
+      const getRadioVal = (name) => parseInt(document.querySelector(`input[name="${name}"]:checked`)?.value || 0);
+
+      const entry = {
+        evalName,
+        group,
+        scores: [
+          getRadioVal('b1_q1'), getRadioVal('b1_q2'),
+          getRadioVal('b2_q1'), getRadioVal('b2_q2'),
+          getRadioVal('b3_q1'), getRadioVal('b3_q2'),
+          getRadioVal('b4_q1'), getRadioVal('b4_q2')
+        ],
+        hireDecision: document.getElementById('hire-decision').value,
+        comments: document.getElementById('eval-comments').value,
+        timestamp: new Date().toLocaleString('pt-BR')
+      };
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<i data-lucide="loader-2" class="animate-spin"></i> Gravando na base de dados...`;
+      lucide.createIcons();
+
+      try {
+        await fetch(API_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(entry)
+        });
+
+        alert('Avaliação salva na nuvem com sucesso! O formulário foi limpo para o próximo avaliador.');
+        document.getElementById('evaluation-form').reset();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        // Atualiza lista local em segundo plano
+        setTimeout(() => fetchCloudData(), 1500);
+      } catch (error) {
+        alert('Erro ao enviar avaliação. Verifique sua conexão com a internet.');
+        console.error(error);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<i data-lucide="send"></i> Enviar Avaliação para Nuvem`;
+        lucide.createIcons();
+      }
+    }
+
+    let chartScoresInst, chartHiringInst;
+
+    function renderCharts() {
+      const averages = GROUPS_LIST.map(g => {
+        const items = storageData.filter(d => d.group === g);
+        if(!items.length) return 0;
+        const sum = items.reduce((acc, curr) => acc + curr.scores.reduce((a,b)=>a+b,0)/curr.scores.length, 0);
+        return (sum / items.length).toFixed(1);
+      });
+
+      if(chartScoresInst) chartScoresInst.destroy();
+      const ctx1 = document.getElementById('chart-scores').getContext('2d');
+      chartScoresInst = new Chart(ctx1, {
+        type: 'bar',
+        data: {
+          labels: GROUPS_LIST,
+          datasets: [{
+            label: 'Média Geral (1 a 5)',
+            data: averages,
+            backgroundColor: '#3b82f6'
+          }]
+        },
+        options: {
+          scales: { y: { min: 0, max: 5 } }
+        }
+      });
+
+      const decisions = {};
+      storageData.forEach(d => {
+        decisions[d.hireDecision] = (decisions[d.hireDecision] || 0) + 1;
+      });
+
+      if(chartHiringInst) chartHiringInst.destroy();
+      const ctx2 = document.getElementById('chart-hiring').getContext('2d');
+      chartHiringInst = new Chart(ctx2, {
+        type: 'pie',
+        data: {
+          labels: Object.keys(decisions),
+          datasets: [{
+            data: Object.values(decisions),
+            backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444']
+          }]
+        }
+      });
+    }
+
+    function renderReports() {
+      const container = document.getElementById('reports-container');
+      if(!storageData.length) {
+        container.innerHTML = `<p class="text-slate-400">Nenhuma avaliação registrada na base de dados ainda.</p>`;
+        return;
+      }
+
+      container.innerHTML = storageData.slice().reverse().map((d) => `
+        <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 space-y-2">
+          <div class="flex justify-between items-center">
+            <span class="font-bold text-blue-400">${d.group}</span>
+            <span class="text-xs text-slate-400">Avaliador: ${d.evalName} (${d.timestamp})</span>
+          </div>
+          <p class="text-sm text-slate-300"><strong>Decisão:</strong> ${d.hireDecision}</p>
+          <p class="text-sm text-slate-400"><strong>Parecer:</strong> ${d.comments}</p>
+        </div>
+      `).join('');
+    }
+
+    async function exportToExcel() {
+      await fetchCloudData();
+      if(!storageData.length) {
+        alert("Nenhum dado registrado para exportar.");
+        return;
+      }
+
+      let csvContent = "\uFEFF";
+      csvContent += "Data/Hora;Avaliador;Grupo Avaliado;Fit Cultural Q1;Fit Cultural Q2;Soft Skills Q1;Soft Skills Q2;Hard Skills Q1;Hard Skills Q2;Negocios Q1;Negocios Q2;Media Avaliador;Decisao Contratacao;Parecer Final\n";
+
+      storageData.forEach(item => {
+        const avg = (item.scores.reduce((a,b)=>a+b,0)/item.scores.length).toFixed(2).replace('.', ',');
+        const row = [
+          `"${item.timestamp}"`,
+          `"${item.evalName}"`,
+          `"${item.group}"`,
+          item.scores[0], item.scores[1],
+          item.scores[2], item.scores[3],
+          item.scores[4], item.scores[5],
+          item.scores[6], item.scores[7],
+          `"${avg}"`,
+          `"${item.hireDecision}"`,
+          `"${String(item.comments).replace(/"/g, '""')}"`
         ];
+        csvContent += row.join(";") + "\n";
+      });
 
-        // Renderizar Critérios (0 a 5)
-        const containerCriterios = document.getElementById('listaCriterios');
-        criterios.forEach(c => {
-            containerCriterios.innerHTML += `
-                <div class="criterio-card">
-                    <div class="criterio-info">
-                        <h4>${c.titulo}</h4>
-                        <p>${c.desc}</p>
-                    </div>
-                    <div class="nota-box">
-                        <span>Nota (0 a 5)</span>
-                        <input type="number" class="nota-input" id="nota_${c.id}" min="0" max="5" step="0.5" value="0.0" required oninput="calcularTotal()">
-                    </div>
-                </div>
-            `;
-        });
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `resultados_avaliacao_ti_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
 
-        function calcularTotal() {
-            const inputs = document.querySelectorAll('.nota-input');
-            let soma = 0;
-            inputs.forEach(input => {
-                let val = parseFloat(input.value);
-                if (isNaN(val)) val = 0;
-                if (val > 5) { val = 5; input.value = "5.0"; }
-                if (val < 0) { val = 0; input.value = "0.0"; }
-                soma += val;
-            });
-            document.getElementById('notaTotalDisplay').textContent = `${soma.toFixed(1)} / 50.0`;
-            return soma.toFixed(1);
+    async function clearAllData() {
+      if(confirm("ATENÇÃO: Isso apagará TODAS as avaliações da sua Planilha Google em nuvem. Deseja continuar?")) {
+        try {
+          await fetch(API_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: "clear" })
+          });
+          storageData = [];
+          alert("Comando enviado! A planilha foi limpa.");
+          setTimeout(() => fetchCloudData(), 1500);
+        } catch (e) {
+          alert("Erro ao limpar dados.");
         }
-
-        function mudarAba(aba) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            
-            if (aba === 'avaliacao') {
-                document.querySelectorAll('.tab-btn')[0].classList.add('active');
-                document.getElementById('aba-avaliacao').classList.add('active');
-            } else {
-                document.querySelectorAll('.tab-btn')[1].classList.add('active');
-                document.getElementById('aba-dashboard').classList.add('active');
-                atualizarDashboard();
-            }
-        }
-
-        // Salvar Avaliação
-        document.getElementById('formAvaliacao').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const notaFinal = parseFloat(calcularTotal());
-            
-            const notasDetalhadas = criterios.map(c => ({
-                criterio: c.titulo,
-                nota: parseFloat(document.getElementById(`nota_${c.id}`).value || 0).toFixed(1)
-            }));
-
-            const novaAvaliacao = {
-                data: new Date().toLocaleString('pt-BR'),
-                avaliador: document.getElementById('avaliador').value.trim(),
-                equipe: document.getElementById('equipe').value.trim(),
-                integrantes: document.getElementById('integrantes').value.trim() || "Não informado",
-                notas: notasDetalhadas,
-                notaFinal: notaFinal,
-                parecer: document.getElementById('parecer').value.trim() || "Sem observações."
-            };
-
-            let avaliacoes = JSON.parse(localStorage.getItem('hackathon_avaliacoes') || '[]');
-            avaliacoes.push(novaAvaliacao);
-            localStorage.setItem('hackathon_avaliacoes', JSON.stringify(avaliacoes));
-
-            alert(`Avaliação da equipe "${novaAvaliacao.equipe}" (Total: ${notaFinal} pts) salva com sucesso!`);
-            
-            const profAtual = document.getElementById('avaliador').value;
-            this.reset();
-            document.getElementById('avaliador').value = profAtual;
-            calcularTotal();
-        });
-
-        // Atualizar Dashboard e Ranking
-        function atualizarDashboard() {
-            const avaliacoes = JSON.parse(localStorage.getItem('hackathon_avaliacoes') || '[]');
-            
-            // Agrupar por equipe (normalizando o nome em maiúsculas para evitar duplicatas por digitação)
-            let equipesMap = {};
-            avaliacoes.forEach(av => {
-                let nomeEquipeOriginal = av.equipe;
-                let chave = nomeEquipeOriginal.toUpperCase();
-                if (!equipesMap[chave]) {
-                    equipesMap[chave] = { nome: nomeEquipeOriginal, totalNotas: 0, qtd: 0 };
-                }
-                equipesMap[chave].totalNotas += av.notaFinal;
-                equipesMap[chave].qtd += 1;
-            });
-
-            let ranking = Object.values(equipesMap).map(eq => ({
-                nome: eq.nome,
-                media: eq.totalNotas / eq.qtd,
-                avaliacoes: eq.qtd
-            })).sort((a, b) => b.media - a.media);
-
-            // Renderizar Pódio
-            let podiumHTML = '';
-            const medalhas = ['🥇', '🥈', '🥉'];
-            const classesCard = ['gold', 'silver', 'bronze'];
-            
-            for (let i = 0; i < 3; i++) {
-                if (i < ranking.length) {
-                    podiumHTML += `
-                        <div class="podium-card ${classesCard[i]}">
-                            <div class="podium-medal">${medalhas[i]}</div>
-                            <div class="podium-team">${ranking[i].nome}</div>
-                            <div class="podium-score">${ranking[i].media.toFixed(1)} <span style="font-size:0.7rem; color:#94a3b8;">pts</span></div>
-                        </div>
-                    `;
-                } else {
-                    podiumHTML += `
-                        <div class="podium-card" style="opacity: 0.4;">
-                            <div class="podium-medal">${medalhas[i]}</div>
-                            <div class="podium-team">—</div>
-                            <div class="podium-score">0.0</div>
-                        </div>
-                    `;
-                }
-            }
-            document.getElementById('podiumContainer').innerHTML = podiumHTML;
-
-            // Renderizar Tabela Completa
-            let tabelaHTML = '';
-            if (ranking.length === 0) {
-                tabelaHTML = `<tr><td colspan="4" style="text-align: center; color: #94a3b8;">Nenhuma avaliação registrada ainda.</td></tr>`;
-            } else {
-                ranking.forEach((eq, index) => {
-                    tabelaHTML += `
-                        <tr>
-                            <td style="font-weight: bold; color: var(--primary);">#${index + 1}</td>
-                            <td style="font-weight: 600; color: #fff;">${eq.nome}</td>
-                            <td>${eq.avaliacoes} ${eq.avaliacoes === 1 ? 'avaliação' : 'avaliações'}</td>
-                            <td style="font-weight: bold; color: #10b981;">${eq.media.toFixed(1)} / 50.0</td>
-                        </tr>
-                    `;
-                });
-            }
-            document.getElementById('rankingTabelaBody').innerHTML = tabelaHTML;
-        }
-
-        async function verificarSenha(senhaDigitada) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(senhaDigitada);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('') === SENHA_HASH_CORRETA;
-        }
-
-        // Exportar Relatório Geral
-        async function exportarRelatorioGeral() {
-            const senha = prompt("Introduza a senha de administrador para exportar o relatório:");
-            if (!senha) return;
-
-            if (!(await verificarSenha(senha))) {
-                alert("Senha incorreta. Acesso negado.");
-                return;
-            }
-
-            let avaliacoes = JSON.parse(localStorage.getItem('hackathon_avaliacoes') || '[]');
-            if (avaliacoes.length === 0) {
-                alert('Nenhuma avaliação encontrada.');
-                return;
-            }
-
-            let txt = "========================================================\n";
-            txt += "   RELATÓRIO OFICIAL CONSOLIDADO — HACKATHON TI 2026/2\n";
-            txt += "             FACULDADE ANHANGUERA OSASCO\n";
-            txt += "========================================================\n";
-            txt += `Gerado em: ${new Date().toLocaleString('pt-BR')}\n\n`;
-
-            avaliacoes.forEach((av, index) => {
-                txt += `--- AVALIAÇÃO #${index + 1} ---\n`;
-                txt += `Data/Hora: ${av.data}\n`;
-                txt += `Avaliador(a): ${av.avaliador}\n`;
-                txt += `Equipe/Projeto: ${av.equipe}\n`;
-                txt += `Integrantes: ${av.integrantes}\n\n`;
-                txt += `NOTAS (0 a 5):\n`;
-                av.notas.forEach(n => {
-                    txt += `  • ${n.criterio}: ${n.nota}\n`;
-                });
-                txt += `\n>>> TOTAL DA AVALIAÇÃO: ${av.notaFinal} / 50.0 <<<\n`;
-                txt += `Parecer: ${av.parecer}\n`;
-                txt += "--------------------------------------------------------\n\n";
-            });
-
-            const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `relatorio_geral_hackathon_${new Date().toISOString().slice(0,10)}.txt`;
-            link.click();
-        }
-
-        // Limpar Base
-        async function limparTodasAvaliacoes() {
-            const senha = prompt("Introduza a senha de administrador para APAGAR todas as avaliações:");
-            if (!senha) return;
-
-            if (!(await verificarSenha(senha))) {
-                alert("Senha incorreta. Acesso negado.");
-                return;
-            }
-
-            if (confirm("ATENÇÃO: Deseja apagar permanentemente todas as avaliações salvas?")) {
-                localStorage.removeItem('hackathon_avaliacoes');
-                atualizarDashboard();
-                alert("Base limpa com sucesso!");
-            }
-        }
-    </script>
+      }
+    }
+  </script>
 </body>
 </html>
